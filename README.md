@@ -2,25 +2,33 @@
 
 编辑已有文章、评论和文档中的空话、重复及模板化表达，保留事实、确定程度和作者声音。输入是一段文字或一个文件，默认输出最终改写稿；没有问题的句子可以不改。
 
-这是一份由 Agent 读取执行的编辑指导，不是独立的检测程序。它不能证明文章由谁撰写，也不保证通过任何 AI 检测器。
+这是一份由 Agent 读取执行的编辑指导，本身不做文本检测。它不能证明文章由谁撰写，也不保证通过任何 AI 检测器。
 
-> 2026-09-23 更新：重写了规则和示例，明确保留事实、作者立场和文体。普通的排比、破折号和连接词不再一律修改。详见 [更新记录](CHANGELOG.md)。
+本仓库是 [op7418/Humanizer-zh](https://github.com/op7418/Humanizer-zh) 的 fork，沿用上游的正文结构、示例和 MIT 许可；相对上游的改动见下面的更新说明和 [CHANGELOG.md](CHANGELOG.md)。
+
+> 2026-11-03 更新：35 条详解拆到 `reference/` 的七个分组文件，`patterns.md` 只留索引；默认只交付成稿，改动清单改为作者问起时再给；复核由子 agent 独立执行同一份清单。
+>
+> 这次修改针对三个问题：
+>
+> 1. 一次读完 35 条时，靠后的条目容易被忽略。改成一次读一组，复核由另一个 agent 独立执行。
+> 2. DeepSeek、GPT 生成的提纲式文本：结构由标题分节、表格和冒号列举组成，信息不少，读起来像提纲。输入是这种结构时，先询问用户保留结构还是还原成段落。
+> 3. DeepSeek 常见的模板化写法：空泛拔高、强凑三段式、万能破折号、首句复读标题。这类写法由 35 条检查点覆盖，逐条核对后再改。
 
 ## 安装
 
 ### 方法一：通过 npx 一键安装（推荐）
 
 ```bash
-npx skills add https://github.com/op7418/Humanizer-zh.git
+npx skills add https://github.com/shikakokou/Humanizer-zh.git
 ```
 
-这是最简单的安装方式，会自动将技能安装到正确的目录。
+命令会把技能安装到 skills 目录，不需要手动复制文件。
 
 ### 方法二：通过 Git 克隆
 
 ```bash
 # 克隆到 Claude Code 的 skills 目录
-git clone https://github.com/op7418/Humanizer-zh.git ~/.claude/skills/humanizer-zh
+git clone https://github.com/shikakokou/Humanizer-zh.git ~/.claude/skills/humanizer-zh
 ```
 
 ### 方法三：手动安装
@@ -29,12 +37,16 @@ git clone https://github.com/op7418/Humanizer-zh.git ~/.claude/skills/humanizer-
 2. 将 `Humanizer-zh` 文件夹复制到 Claude Code 的 skills 目录：
    - **macOS/Linux**: `~/.claude/skills/`
    - **Windows**: `%USERPROFILE%\.claude\skills\`
-
 3. 确保文件夹结构如下：
+
    ```
    ~/.claude/skills/humanizer-zh/
-   ├── SKILL.md       # 技能定义文件（中文版）
-   └── README.md      # 说明文档
+   ├── SKILL.md              # 流程、约束与速查表
+   ├── reference/
+   │   ├── patterns.md       # 分组索引
+   │   └── A.md … G.md       # 35 条详解与示例
+   ├── README.md
+   └── tests/                # 案例与只读结构检查脚本（可选）
    ```
 
 ### 验证安装
@@ -45,7 +57,7 @@ git clone https://github.com/op7418/Humanizer-zh.git ~/.claude/skills/humanizer-
 /humanizer-zh
 ```
 
-如果安装成功，该技能将被激活。
+安装成功后，该技能即可使用。
 
 ## 使用
 
@@ -62,7 +74,19 @@ git clone https://github.com/op7418/Humanizer-zh.git ~/.claude/skills/humanizer-
 请用 humanizer-zh 润色 article.md 中的正文。
 ```
 
-只审阅时说明“给出建议，不修改文件”。有作者样本时可一并提供，Skill 会借鉴表达习惯，但不会把样本中的经历、数据或观点搬入原文。
+逐条审阅（要求逐条对照）：
+
+```text
+请用 humanizer-zh 逐条审阅这篇说明，给出每一条的判定和改写建议，不要直接改文件。
+```
+
+只审阅时说明“给出建议，不修改文件”。有作者样本时可一并提供，Skill 会借鉴表达习惯，但不会把样本中的经历、数据或观点写入原文。
+
+## 工作流程
+
+三件事：列出命中的检查点、按命中改写、由另一个 agent 复核。不建目录，不写中间文件。
+
+默认只给成稿。作者要清单时，每条改动一行，依次写原句、改后句和条目号；原句从原文逐字抄。清单里没有“无”，也没有没命中的条目。用户明确要求“审阅”“逐条检查”时，35 条逐条给出判定，含“无”。详细步骤见 [SKILL.md](SKILL.md)。
 
 ## 改写示例
 
@@ -90,7 +114,7 @@ git clone https://github.com/op7418/Humanizer-zh.git ~/.claude/skills/humanizer-
 >
 > 改写：这次更新新增导出、搜索和批量重命名。离线编辑计划在下一版推出，目前尚未完成测试。
 
-保留三个功能，不为避开三段式删项或凑项；计划和测试状态保持原意。
+保留三个功能，不为避开三段式删除条目或补造条目；计划和测试状态保持原意。
 
 **已经清楚的文字：**
 
@@ -107,13 +131,14 @@ git clone https://github.com/op7418/Humanizer-zh.git ~/.claude/skills/humanizer-
 - 不编造功能、数据、来源、人物身份或第一人称经历。
 - 保留否定、条件、归因、范围、时间和完成状态；“可能”不变成“确定”，“计划”不变成“已经”。
 - 三项列表、四字格、被动句、破折号和连接词按作用判断，不机械删除。
+- 先确认交付形态：输入是分节、表格和列举组成的提纲式文本时，询问用户保留结构还是还原成段落；实验记录、数据表和对照表默认保留结构。
 - 随笔可以保留个性，学术和商务文本保留正式程度；不把所有文章改成同一种口语。
 - 文件编辑默认保留代码、命令、路径、链接目标、YAML、数据、标题和锚点。改标题或结构需要检查引用。
-- 默认只交付最终稿，不要求展示中间草稿、命中清单或自评分。
+- 默认只交付成稿；作者问起改了什么时再给清单，不附草稿或自评分。
 
 ## 模式目录
 
-保留 31 个检查点，沿用 PR #39 的 A–F 分类，便于对照。这是编辑问题清单，不是作者身份检测标准。
+保留 35 个检查点：A–F 沿用 PR #39 的分类，G 组为本仓库新增，便于对照。这是编辑问题清单，用于发现表达问题，不用于判断作者身份。每条的条件、示例和保留边界见 [reference/A.md](reference/A.md) 到 [G.md](reference/G.md)，一次读一个文件。
 
 | 分类 | 检查点 |
 |---|---|
@@ -123,19 +148,19 @@ git clone https://github.com/op7418/Humanizer-zh.git ~/.claude/skills/humanizer-
 | D：公式化排版（19–21） | 无效粗体、装饰性标题、引号和标点 |
 | E：聊天与草稿残留（22–25） | 客服腔、重复免责与猜测填充、首句复读标题、编辑过程残留 |
 | F：中文补充检查（26–31） | 长定语、“进行＋动词”、被字句堆叠、四字词排比、万能背景、套话收尾 |
-
-每条包括修改条件、前后示例和保留边界，详见 [SKILL.md](SKILL.md)。
+| G：句子与标点补充（32–35） | 冒号列举、装饰性引号、正文箭头、缺宾语 |
 
 ## 验证
 
-[测试说明](tests/README.md)包含 18 个短文本案例、一个 Markdown 文件样例和结构检查脚本。本次更新还做了旧版与修订版的长文对照，检查数字、条件、归因、作者态度和文件结构。单次、有限样例不能代表所有模型和文体；不能用字数下降或模型自评分证明效果。
+文本案例见 [tests/README.md](tests/README.md)，包含 21 个短文本案例、一个 Markdown 文件样例和只读的结构检查脚本。较早的长文对照检查了数字、条件、归因、作者态度和文件结构；单次、有限样例不能代表所有模型和文体，字数下降或模型自评分也不能证明效果。
 
 ## 来源与许可
 
+- [op7418/Humanizer-zh](https://github.com/op7418/Humanizer-zh)：上游原仓库，本仓库是它的 fork。
 - [blader/humanizer v3.0.0](https://github.com/blader/humanizer/blob/v3.0.0/SKILL.md)：原项目及 A–E 分类、声音校准、文件模式的来源。
 - [Humanizer-zh PR #39](https://github.com/op7418/Humanizer-zh/pull/39)：本次修订的结构基础与中文检查点来源。
 - [Humanizer-zh PR #34](https://github.com/op7418/Humanizer-zh/pull/34)：示例保真修复的对照参考。本修订没有直接合并该分支。
 - [hardikpandya/stop-slop](https://github.com/hardikpandya/stop-slop)：简洁表达与编辑检查的参考来源。
-- [Wikipedia: Signs of AI writing](https://en.wikipedia.org/wiki/Wikipedia:Signs_of_AI_writing)：原项目的观察来源。
+- [Wikipedia: Signs of AI writing](https://en.wikipedia.org/wiki/Signs_of_AI_writing)：原项目的观察来源。
 
 遵循仓库中的 [MIT License](LICENSE)。
