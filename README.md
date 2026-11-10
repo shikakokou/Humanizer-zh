@@ -38,6 +38,7 @@ git clone https://github.com/shikakokou/Humanizer-zh.git ~/.claude/skills/humani
    │   ├── patterns.md       # 分组索引
    │   ├── A.md … G.md       # 正文检查点详解与示例
    │   ├── H.md              # 标题检查 T1–T6
+   │   ├── I.md              # AI-ish 用词 I1–I2
    │   └── optional.md       # 过度截短、省略与口语化（可选）
    ├── README.md
    └── tests/                # 案例与只读结构检查脚本（可选）
@@ -140,7 +141,7 @@ git clone https://github.com/shikakokou/Humanizer-zh.git ~/.claude/skills/humani
 
 ## 模式目录
 
-保留正文检查点：A–F 沿用 PR #39 的分类，G 组为本仓库新增，便于对照。另有标题检查 T1–T6，不占正文检查点的编号，只在标题进入编辑范围时使用（见 [reference/H.md](reference/H.md)）。这是编辑问题清单，用于发现表达问题，不用于判断作者身份。每条的条件、示例和保留边界见 [reference/A.md](reference/A.md) 到 [G.md](reference/G.md)，一次读一个文件。
+保留正文检查点：A–F 沿用 PR #39 的分类，G、I 组为本仓库新增，便于对照。另有标题检查 T1–T6，不占正文检查点的编号，只在标题进入编辑范围时使用（见 [reference/H.md](reference/H.md)）。这是编辑问题清单，用于发现表达问题，不用于判断作者身份。每条的条件、示例和保留边界见 reference/ 下的分组文件（A.md–G.md、I.md 为正文检查点，H.md 为标题检查），一次读一个文件。
 
 | 分类 | 检查点 |
 |---|---|
@@ -152,10 +153,11 @@ git clone https://github.com/shikakokou/Humanizer-zh.git ~/.claude/skills/humani
 | F：中文补充检查 | 长定语、“进行＋动词”、被字句堆叠、四字词排比、万能背景、套话收尾 |
 | G：句子与标点补充 | 冒号列举、装饰性引号、正文箭头、缺宾语 |
 | H：标题检查（T1–T6，独立模块） | 标题在替正文总结、只命名不裁判、第一节与结尾、语域、题文不符、层级格式 |
+| I：AI-ish 用词 | 词义直译（half/-side→半边）、物理动作与性质词 |
 
 ## 验证
 
-文本案例见 [tests/README.md](tests/README.md)，包含短文本案例、一个 Markdown 文件样例和只读的结构检查脚本。新增案例覆盖标题检查、「保留 md 标题的自然文档」形态和过度截短、省略与口语化的可选修复；较早的长文对照检查了数字、条件、归因、作者态度和文件结构。单次、有限样例不能代表所有模型和文体，字数下降或模型自评分也不能证明效果。
+文本案例见 [tests/README.md](tests/README.md)，包含短文本案例、一个 Markdown 文件样例和只读的结构检查脚本。新增案例覆盖标题检查、「保留 md 标题的自然文档」形态、过度截短、省略与口语化的可选修复和 AI-ish 用词；较早的长文对照检查了数字、条件、归因、作者态度和文件结构。单次、有限样例不能代表所有模型和文体，字数下降或模型自评分也不能证明效果。
 
 ## 来源与许可
 
