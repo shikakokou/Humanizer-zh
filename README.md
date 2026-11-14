@@ -1,8 +1,10 @@
 # Humanizer-zh：中文文本润色 Skill
 
-编辑已有文章、评论和文档中的空话、重复及模板化表达，保留事实、确定程度和作者声音。输入是一段文字或一个文件，默认输出最终改写稿；没有问题的句子可以不改。用户要求时也检查文档标题和分节标题，按 T1–T6 给出建议。
+编辑已有文章、评论和文档中的空话、重复及模板化表达，保留事实、确定程度和作者声音。输入是一段文字或一个文件，默认输出最终改写稿；没有问题的句子可以不改。用户要求时也检查标题（含图注、表题），按 H.md 的检查清单给出建议。
 
 这是一份由 Agent 读取执行的编辑指导，本身不做文本检测。它不能证明文章由谁撰写，也不保证通过任何 AI 检测器。
+
+本项目基于 ds flash 4.1 模型进行了一些调整和测试；据此修订的措辞与新增的测试文本见 [CHANGELOG.md](CHANGELOG.md)。
 
 本仓库是 [op7418/Humanizer-zh](https://github.com/op7418/Humanizer-zh) 的 fork，沿用上游的正文结构、示例和 MIT 许可；相对上游的改动见 [CHANGELOG.md](CHANGELOG.md)。
 
@@ -19,26 +21,28 @@ npx skills add https://github.com/shikakokou/Humanizer-zh.git
 ### 方法二：通过 Git 克隆
 
 ```bash
-# 克隆到 Claude Code 的 skills 目录
+# 克隆到所用 Agent 的 skills 目录（下面以 Claude Code 为例，其他 Agent 换成对应目录）
 git clone https://github.com/shikakokou/Humanizer-zh.git ~/.claude/skills/humanizer-zh
 ```
 
 ### 方法三：手动安装
 
 1. 下载本项目的 ZIP 文件或克隆到本地
-2. 将 `Humanizer-zh` 文件夹复制到 Claude Code 的 skills 目录：
+2. 将 `Humanizer-zh` 文件夹复制到所用 Agent 的 skills 目录。Claude Code 的默认位置：
    - **macOS/Linux**: `~/.claude/skills/`
    - **Windows**: `%USERPROFILE%\.claude\skills\`
+
+   DSH 的 skills 目录为 `~/.dsh/skills/`（Windows 为 `%USERPROFILE%\.dsh\skills\`）。
 3. 确保文件夹结构如下：
 
    ```
-   ~/.claude/skills/humanizer-zh/
-   ├── SKILL.md              # 流程、约束与速查表
+   <skills 目录>/humanizer-zh/
+   ├── SKILL.md              # 流程与约束
    ├── reference/
-   │   ├── patterns.md       # 分组索引
+   │   ├── patterns.md       # 模式目录（分组与条目）
    │   ├── A.md … G.md       # 正文检查点详解与示例
-   │   ├── H.md              # 标题检查 T1–T6
-   │   ├── I.md              # AI-ish 用词 I1–I2
+   │   ├── H.md              # 标题检查
+   │   ├── I.md              # AI-ish 用词
    │   └── optional.md       # 过度截短、省略与口语化（可选）
    ├── README.md
    └── tests/                # 案例与只读结构检查脚本（可选）
@@ -46,7 +50,7 @@ git clone https://github.com/shikakokou/Humanizer-zh.git ~/.claude/skills/humani
 
 ### 验证安装
 
-重启 Claude Code 或重新加载 skills 后，在对话中输入：
+重启 Agent 或重新加载 skills 后，在对话中调用该技能；Claude Code 输入：
 
 ```
 /humanizer-zh
@@ -66,7 +70,7 @@ git clone https://github.com/shikakokou/Humanizer-zh.git ~/.claude/skills/humani
 编辑文件：
 
 ```text
-请用 humanizer-zh 润色 article.md 中的正文。
+请用 humanizer-zh 润色 article.md 中的正文，并直接改文件。
 ```
 
 逐条审阅（要求逐条对照）：
@@ -85,9 +89,9 @@ git clone https://github.com/shikakokou/Humanizer-zh.git ~/.claude/skills/humani
 
 ## 工作流程
 
-三件事：列出命中的检查点、按命中改写、由另一个 agent 复核。不建目录，不写中间文件。标题进入范围时，先按 T1–T6 检查标题，再改正文。
+四件事：列出命中的检查点、按命中改写、由另一个 agent 复核、交付前逐条核对。不建目录，不写中间文件。标题进入范围时，先按 H.md 检查标题，再改正文。
 
-默认只给成稿。作者要清单时，每条改动一行，依次写原句、改后句和条目号；原句从原文逐字抄。清单里没有“无”，也没有没命中的条目。用户明确要求“审阅”“逐条检查”时，正文检查点逐条给出判定，含“无”；文中有标题时，标题检查也逐条给出判定。详细步骤见 [SKILL.md](SKILL.md)。
+默认交成稿，必要的说明可放在正文之外。作者要清单时，每条改动一行，依次写原句、改后句、条目号和改动的层；原句从原文逐字抄。用户明确要求“审阅”“逐条检查”时，正文检查点逐条给出判定，含“无”；文中有标题时，标题检查也逐条给出判定。详细步骤见 [SKILL.md](SKILL.md)。
 
 ## 改写示例
 
@@ -132,28 +136,16 @@ git clone https://github.com/shikakokou/Humanizer-zh.git ~/.claude/skills/humani
 - 不编造功能、数据、来源、人物身份或第一人称经历。
 - 保留否定、条件、归因、范围、时间和完成状态；“可能”不变成“确定”，“计划”不变成“已经”。
 - 三项列表、四字格、被动句、破折号和连接词按作用判断，不机械删除。
-- 先确认交付形态：输入是分节、表格和列举组成的提纲式文本时，让用户三选一——保持提纲式文档、合成自然文档、保留提纲式 md 标题的自然文档；实验记录、数据表和对照表默认保留结构。
+- 先确认交付形态：输入是提纲式文本（标题分节、表格或冒号列举）时，让用户三选一——保持提纲式文档、合成自然文档、保留提纲式 md 标题的自然文档；只说要成文、没说形态的，先问选哪一种。
 - 随笔可以保留个性，学术和商务文本保留正式程度；不把所有文章改成同一种口语。
 - 文件编辑默认保留代码、命令、路径、链接目标、YAML、数据、标题和锚点。改标题或结构需要检查引用。
-- 标题默认不动。用户要求检查或修改标题、或要求审阅整篇文档时才按 T1–T6 检查；标题在替正文总结、下判词、第一节复读或结尾标题替正文下判断，都要指出来，改标题前查目录、锚点和交叉引用。
+- 标题默认不动。用户要求检查或修改标题、或要求审阅整篇文档时才按 H.md 检查；标题在替正文总结、下判词、第一节复读或结尾标题替正文下判断，都要指出来，改标题前查目录、锚点和交叉引用。
 - 过度截短、省略与口语化是独立可选修复，只用于技术和专业领域文本；开始检查前问一次是否处理，同意才改，不默认改。成串单字动词恢复成完整动词，截短的术语用文章原词，动作化和内部简称改成直接描述，省略的条件、对象或步骤按原文补回；项目术语保留，换完变模糊或丢信息就不换。见 [reference/optional.md](reference/optional.md)。
-- 默认只交付成稿；作者问起改了什么时再给清单，不附草稿或自评分。
+- 默认交成稿，必要的说明可放在正文之外；作者问起改了什么时再给清单，不附草稿或自评分。
 
 ## 模式目录
 
-保留正文检查点：A–F 沿用 PR #39 的分类，G、I 组为本仓库新增，便于对照。另有标题检查 T1–T6，不占正文检查点的编号，只在标题进入编辑范围时使用（见 [reference/H.md](reference/H.md)）。这是编辑问题清单，用于发现表达问题，不用于判断作者身份。每条的条件、示例和保留边界见 reference/ 下的分组文件（A.md–G.md、I.md 为正文检查点，H.md 为标题检查），一次读一个文件。
-
-| 分类 | 检查点 |
-|---|---|
-| A：铺垫代替陈述 | 假对比、戏剧性碎片、伪深度、起跑式铺垫、无对象的辩护 |
-| B：公式化节奏 | 强凑三段式、重复开头、万能破折号、限定堆叠、生造复合词、被动与缺主语 |
-| C：拔高与借权威 | 空泛高频词、意义拔高、模糊关联、句尾拔高、宣传语、权威背书、复杂系动词 |
-| D：公式化排版 | 无效粗体、装饰性标题、引号和标点 |
-| E：聊天与草稿残留 | 客服腔、重复免责与猜测填充、首句复读标题、编辑过程残留 |
-| F：中文补充检查 | 长定语、“进行＋动词”、被字句堆叠、四字词排比、万能背景、套话收尾 |
-| G：句子与标点补充 | 冒号列举、装饰性引号、正文箭头、缺宾语 |
-| H：标题检查（T1–T6，独立模块） | 标题在替正文总结、只命名不裁判、第一节与结尾、语域、题文不符、层级格式 |
-| I：AI-ish 用词 | 词义直译（half/-side→半边）、物理动作与性质词 |
+正文检查点（A–F 沿用 PR #39 的分类，G、I 组为本仓库新增）和标题检查（独立模块，不占正文检查点编号，只在标题进入编辑范围时使用）的分组、条目和读取顺序，直接见模式目录 [reference/patterns.md](reference/patterns.md)；每条的条件、示例和保留边界在 `reference/` 下的分组文件里，一次读一个文件。这是编辑问题清单，用于发现表达问题，不用于判断作者身份。
 
 ## 验证
 
@@ -166,6 +158,7 @@ git clone https://github.com/shikakokou/Humanizer-zh.git ~/.claude/skills/humani
 - [Humanizer-zh PR #39](https://github.com/op7418/Humanizer-zh/pull/39)：本次修订的结构基础与中文检查点来源。
 - [Humanizer-zh PR #34](https://github.com/op7418/Humanizer-zh/pull/34)：示例保真修复的对照参考。本修订没有直接合并该分支。
 - [hardikpandya/stop-slop](https://github.com/hardikpandya/stop-slop)：简洁表达与编辑检查的参考来源。
+- [karminski/deepseek-v4.1-flash-1017-issue-pov](https://github.com/karminski/deepseek-v4.1-flash-1017-issue-pov)：ds flash 4.1 的运行报告；本仓库据此做了去歧义修订。
 - [Wikipedia: Signs of AI writing](https://en.wikipedia.org/wiki/Signs_of_AI_writing)：原项目的观察来源。
 
 遵循仓库中的 [MIT License](LICENSE)。
