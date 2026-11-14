@@ -16,6 +16,12 @@
 - 同步更新 `SKILL.md`、`README.md`、`patterns.md`、`D.md`、`H.md` 和 `tests/README.md`；`tests/fixtures/negative.json` 的实验记录用例写明按形态 1 处理。
 - 测试用例：`tests/fixtures/positive.json` 里 `telegraphic_optional`、`colloquial_optional` 的 request 明确写成「请处理专业技术文本，处理过度截短/口语化，润色这段…说明。」，不再让被测 Agent 以「用户没提」为由跳过开头一问。
 - 测试用例：新增 `tests/fixtures/positive.v2.json`（12 条）和 `tests/fixtures/negative.v2.json`（15 条），`id` 和 `request` 沿用 v1，只把 `input` 换成新文本。原因是原正例输入与 `reference/F.md`、`C.md`、`optional.md`、`I.md` 的示例句逐字或近乎逐字重合，被测模型可以认出示例直接背出改写，测不到按规则判断；新输入每条仍保留原考点，并加入与考点无关的干扰信息（真实数字、日期、细节），与仓库其它文件无连续 12 字重合。v2 里 `telegraphic_optional`、`colloquial_optional` 的 request 题材词同步改成「电池测试说明」「派单说明」，与新输入对应。v1 两份 fixture 保留不删，作对照用。
+- 新增 I3「否定递进」：不是……而是／不用……而是／不是……，肯定句／不是……不是…… 这类句式，出现在段首、段末、标题、列举项，或全文三次以上时处理；处理时保留否定信息，只拆模板框架。I4「提纲式冒号」：冒号只用于专业固定格式、引用与对话、排比和列举，其余正文冒号一律改写；标签条目的冒号仍归 G1，标题冒号归 H2。
+- G2 引号改为默认删除、保留要举证：逐对按「术语／反语／原文引语」三问，条件、时间、程度、判断短语不再算豁免；补上「前者/后者」回指的联动改法。
+- optional：O3 补口语化单字动作（垫、画、填、叠等），即使成分完整也按语域换成书面动词；O5 与 I3 分工。
+- 同步更新 `SKILL.md`、`README.md`、`reference/patterns.md`、`reference/A.md`、`reference/G.md`、`reference/I.md`、`reference/optional.md`、`tests/README.md`；`tests/fixtures/negative.json`、`negative.v2.json` 的 `progress_and_permission` 把说明性冒号改成逗号，避免反例与新 I4 的边界冲突。
+- I3 改为按「否—立」模板功能判定：否定在前或在后、换否定词、换连接词、拆成两句都算；示例只作识别，不是白名单，也不按词序排除。A1 恢复原样（删除上一轮加在 A1 里的 I3 指针段），I3 与 A1 允许重叠，不引入合并规则。
+- 删除 O5「先否定再转折」：O5 号弃用、不重排编号。这类空转由 A1 的「两部分是否各有信息」和 `SKILL.md` 的总判定处理，不为具体连接词逐条列规则。O2 补一句边界：动词带宾语、成分完整、只是语域口语的，不算压缩，按 O3 处理。
 
 ## 2026-11-11
 
