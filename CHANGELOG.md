@@ -22,6 +22,7 @@
 - 同步更新 `SKILL.md`、`README.md`、`reference/patterns.md`、`reference/A.md`、`reference/G.md`、`reference/I.md`、`reference/optional.md`、`tests/README.md`；`tests/fixtures/negative.json`、`negative.v2.json` 的 `progress_and_permission` 把说明性冒号改成逗号，避免反例与新 I4 的边界冲突。
 - I3 改为按「否—立」模板功能判定：否定在前或在后、换否定词、换连接词、拆成两句都算；示例只作识别，不是白名单，也不按词序排除。A1 恢复原样（删除上一轮加在 A1 里的 I3 指针段），I3 与 A1 允许重叠，不引入合并规则。
 - 删除 O5「先否定再转折」：O5 号弃用、不重排编号。这类空转由 A1 的「两部分是否各有信息」和 `SKILL.md` 的总判定处理，不为具体连接词逐条列规则。O2 补一句边界：动词带宾语、成分完整、只是语域口语的，不算压缩，按 O3 处理。
+- 过度截短、省略与口语化仍只在开头问一次，但问的时候建议「处理」，不拿保留紧凑当推荐：这类电文体压缩按表达缺陷处理（判断和边界见 `reference/optional.md`），不是「紧凑」的风格优点。
 
 ## 2026-11-11
 
